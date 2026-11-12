@@ -340,7 +340,7 @@ export default function ProductDetailPage() {
                                     src={product.image_url}
                                     alt={product.name}
                                     onError={() => setImgError(true)}
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-contain p-4"
                                 />
                             ) : (
                                 <div className="flex flex-col items-center gap-3 text-nature-sand dark:text-night-muted">

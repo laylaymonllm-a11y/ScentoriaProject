@@ -237,13 +237,17 @@ export default function HomePage() {
                     </div>
                 )}
             </section>
-
-            {/* --- EDITORIAL STATEMENT --- */}
-            <section className="relative h-[70vh] min-h-[420px] w-full overflow-hidden">
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${STATEMENT_IMAGE})` }}
-                />
+                        {/* --- EDITORIAL STATEMENT --- */}
+                             <section className="relative h-[70vh] min-h-[420px] w-full overflow-hidden">
+                                <video
+                                autoPlay
+                                loop
+                                 muted
+                                 playsInline
+                                className="absolute inset-0 w-full h-full object-cover"
+                            >
+                    <source src="https://videos.pexels.com/video-files/10536481/10536481-uhd_4096_2160_25fps.mp4" type="video/mp4" />
+                </video>
                 <div className="absolute inset-0 bg-black/35" />
                 <div className="relative h-full flex items-center px-6 sm:px-16">
                     <div className="max-w-xl">

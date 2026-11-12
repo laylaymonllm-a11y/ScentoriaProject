@@ -1,5 +1,5 @@
 <?php
-
+ 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ScentController;
@@ -19,9 +19,9 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SalesReportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProductFilterController;
-
+ 
 use Illuminate\Http\Request;
-
+ 
 // Public routes (no auth needed)
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
@@ -31,9 +31,9 @@ Route::get('/notes',[NoteController::class,'index']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{slug}', [ProductController::class, 'show']);
 Route::get('/scents/{scent}', [ScentController::class, 'show']);
-
+ 
 // search
-Route::get('/brands', [BrandController::class, 'search']); 
+Route::get('/brands', [BrandController::class, 'search']);
 Route::get('/brands-list', [ProductFilterController::class, 'brands']);
 Route::get('/seasons', [ProductFilterController::class, 'seasons']);
 Route::get('/genders', [ProductFilterController::class, 'genders']);
@@ -43,18 +43,18 @@ Route::get('/products-by-scent/{id}',     [ProductFilterController::class, 'bySc
 Route::get('/products-by-note/{id}',      [ProductFilterController::class, 'byNote']);
 Route::get('/products-by-season/{value}', [ProductFilterController::class, 'bySeason']);
 Route::get('/products-by-gender/{value}', [ProductFilterController::class, 'byGender']);
-
+ 
 // Order completion — public, protected by signature instead of auth
 Route::get('/orders/{order}/confirm-completion', [OrderCompletionController::class, 'show'])
     ->name('orders.confirm-completion')
     ->middleware('signed');
-
+ 
 Route::post('/orders/{order}/complete', [OrderCompletionController::class, 'complete'])
     ->name('orders.complete');
-
+ 
     // reviews
 Route::get('/products/{product}/reviews', [ReviewController::class, 'index']);
-
+ 
 Route::middleware('auth:sanctum')->group(function () {
     // User Profile
     Route::get('/me', fn (Request $request) => response()->json($request->user()));
@@ -66,23 +66,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/wallet-topups', [ProfileController::class, 'getWalletTopups']);
     Route::post('/wallet-topups', [ProfileController::class, 'storeWalletTopup']);
     Route::get('/reviews', [ProfileController::class, 'getReviews']);
-
+ 
     // Cart Items
     Route::get('/cart', [CartItemController::class, 'index']);
     Route::post('/cart', [CartItemController::class, 'store']);
     Route::delete('/cart/{id}', [CartItemController::class, 'destroy']);
     Route::patch('/cart/{id}', [CartItemController::class, 'update']);
-
+ 
     // Checkout
     Route::post('/orders', [CheckoutController::class, 'store']);
-
+ 
     // Order Confirm
     Route::get('/orders/{id}', [OrderController::class, 'show']);
-
+ 
     // order cancel
     Route::put('/orders/{order}/cancel', [ProfileController::class, 'cancelOrder']);
     Route::get('/payment-methods', [ProfileController::class, 'getAdminPaymentMethods']);
-
+ 
     // review and wishlist
     Route::post('/products/{product}/reviews', [ReviewController::class, 'store']);
     Route::put('/reviews/{review}', [ReviewController::class, 'update']);
@@ -90,18 +90,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/wishlists', [ProfileController::class, 'storeWishlist']);
     Route::delete('/wishlists/{wishlist}', [ProfileController::class, 'destroyWishlist']);
 });
-
-// Admin Routes 
+ 
+// Admin Routes
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index']);
     Route::apiResource('/admin/scents', ScentController::class)->except(['show']);
     Route::apiResource('/admin/notes', NoteController::class)->except(['show']);
     Route::post('/admin/upload', [UploadController::class, 'store']);
-
+ 
     // topups
     Route::get('/admin/wallet-topups', [WalletTopUpController::class, 'index']);
     Route::put('/admin/wallet-topups/{walletTopup}', [WalletTopUpController::class, 'update']);
-
+ 
     // Products
     Route::post('/admin/products', [ProductController::class, 'store']);
     Route::put('/admin/products/{id}', [ProductController::class, 'update']);
@@ -109,18 +109,24 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/admin/products', [ProductController::class, 'adminIndex']);
     Route::get('/admin/products/{id}', [ProductController::class, 'adminShow']);
     Route::patch('/admin/products/{id}/status', [ProductController::class, 'updateStatus']);
-
+ 
     // Brands
     Route::get('/admin/brands', [BrandController::class, 'index']);
     Route::post('/admin/brands', [BrandController::class, 'store']);
     Route::put('/admin/brands/{id}', [BrandController::class, 'update']);
     Route::delete('/admin/brands/{id}', [BrandController::class, 'destroy']);
-
+ 
      
     // Orders
     Route::get('/admin/orders', [OrderController::class, 'index']);
 Route::patch('/admin/orders/{order}', [OrderController::class, 'update']);
-    // sales report
- Route::get('/admin/sales-report', [SalesReportController::class, 'index']);
+    // Sales report
+    // index()  — period-based (day/month/all), read by the admin dashboard.
+    // range()  — date-range based, read by the Sales Report page.
+    // export() — CSV / PDF of exactly what range() returns.
+    Route::get('/admin/sales-report', [SalesReportController::class, 'index']);
+    Route::get('/admin/sales-report/range', [SalesReportController::class, 'range']);
+    Route::get('/admin/sales-report/export', [SalesReportController::class, 'export']);
     Route::post('/admin/sales-report/run-batch', [SalesReportController::class, 'runBatch']);
 });
+ 
